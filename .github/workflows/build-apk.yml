@@ -24,10 +24,34 @@ jobs:
       - name: Install Buildozer
         run: pip install buildozer Cython
 
+      - name: Diagnostics
+        run: |
+          echo "=== OS ===" && cat /etc/os-release
+          echo "=== libtool ===" && dpkg -l libtool | tail -1
+          echo "=== autoconf ===" && autoconf --version | head -1
+          echo "=== aclocal ===" && aclocal --print-ac-dir 2>/dev/null || echo "aclocal not found"
+          echo "=== grep for LT_SYS ===" && grep -r "LT_SYS_SYMBOL_USCORE" /usr/share/aclocal/ 2>/dev/null || echo "MACRO NOT FOUND in /usr/share/aclocal"
+
       - name: Build APK
-        run: yes | buildozer android debug
+        run: |
+          set +e
+          yes | buildozer android debug 2>&1 | tee build.log
+          BUILD_EXIT=$?
+          find .buildozer -name "*.log" -exec cp {} . \; 2>/dev/null || true
+          exit $BUILD_EXIT
+
+      - name: Upload build logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build.log
+            buildozer.log
+            .buildozer/*.log
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: fastodds-apk
