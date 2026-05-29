@@ -25,10 +25,7 @@ jobs:
         run: pip install buildozer Cython
 
       - name: Build APK
-        run: |
-          buildozer android debug || true
-          yes | $HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk --licenses 2>/dev/null || true
-          yes | buildozer android debug
+        run: yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
