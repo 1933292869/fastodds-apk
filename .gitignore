@@ -1,0 +1,9 @@
+_internal/
+v8.exe
+app.ico
+fastoddsv6.py
+final_odds_v5.py
+*.pyc
+__pycache__/
+bin/
+.buildozer/
