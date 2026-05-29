@@ -26,7 +26,11 @@ jobs:
 
       - name: Build APK
         run: |
-          export ACLOCAL_PATH="/usr/share/aclocal:$ACLOCAL_PATH"
+          export ACLOCAL_PATH="$HOME/aclocal:/usr/share/aclocal"
+          mkdir -p "$HOME/aclocal"
+          cat > "$HOME/aclocal/libtool-fix.m4" << 'EOF'
+AC_DEFUN([LT_SYS_SYMBOL_USCORE], [])
+EOF
           yes | buildozer android debug
 
       - name: Upload APK
